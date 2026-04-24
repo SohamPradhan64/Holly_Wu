@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Navbar from "./components/Navbar.jsx";
+import PageTransition from "./components/PageTransition.jsx";
 import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home.jsx";
 import Story from "./pages/Story.jsx";
@@ -14,16 +15,18 @@ export default function App() {
       <ScrollToTop />
       <div className="app">
         <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/story" element={<Story />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/tea-bar" element={<div style={{minHeight:'60vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#d8b47f',fontSize:24}}>Tea Bar — Coming Soon</div>} />
-            <Route path="/reservations" element={<ReservationsPage />} />
-            <Route path="/events" element={<Events />} />
-          </Routes>
-        </main>
+        <PageTransition>
+          <main>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/story" element={<Story />} />
+              <Route path="/menu" element={<Menu />} />
+              <Route path="/tea-bar" element={<div style={{minHeight:'60vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#d8b47f',fontSize:24,paddingTop:80}}>Tea Bar — Coming Soon</div>} />
+              <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="/events" element={<Events />} />
+            </Routes>
+          </main>
+        </PageTransition>
         <Footer />
       </div>
     </BrowserRouter>
