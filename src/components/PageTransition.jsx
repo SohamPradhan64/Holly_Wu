@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { createUseStyles } from "react-jss";
 
@@ -9,7 +9,7 @@ const useStyles = createUseStyles({
   },
   content: {
     opacity: 1,
-    transition: "opacity 0.3s ease",
+    transition: "opacity 0.15s ease",
   },
   contentHidden: {
     opacity: 0,
@@ -71,18 +71,18 @@ const useStyles = createUseStyles({
   },
   curtainClosing: {
     "& $curtainLeft": {
-      animation: "$slideInLeft 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards",
+      animation: "$slideInLeft 0.45s cubic-bezier(0.65, 0, 0.35, 1) forwards",
     },
     "& $curtainRight": {
-      animation: "$slideInRight 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards",
+      animation: "$slideInRight 0.45s cubic-bezier(0.65, 0, 0.35, 1) forwards",
     },
   },
   curtainOpening: {
     "& $curtainLeft": {
-      animation: "$slideOutLeft 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards",
+      animation: "$slideOutLeft 0.45s cubic-bezier(0.65, 0, 0.35, 1) forwards",
     },
     "& $curtainRight": {
-      animation: "$slideOutRight 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards",
+      animation: "$slideOutRight 0.45s cubic-bezier(0.65, 0, 0.35, 1) forwards",
     },
   },
   goldLine: {
@@ -121,44 +121,44 @@ const useStyles = createUseStyles({
 export default function PageTransition({ children }) {
   const classes = useStyles();
   const location = useLocation();
-  const [phase, setPhase] = useState("idle"); // idle | closing | closed | opening
+  const [phase, setPhase] = useState("idle");
   const [displayChildren, setDisplayChildren] = useState(children);
+  const pendingChildrenRef = useRef(null);
   const prevPathRef = useRef(location.pathname);
-  const isFirstRender = useRef(true);
+  const isAnimating = useRef(false);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      prevPathRef.current = location.pathname;
-      setDisplayChildren(children);
-      return;
-    }
+    // Always update the pending children ref with latest
+    pendingChildrenRef.current = children;
+  }, [children]);
 
-    if (location.pathname !== prevPathRef.current) {
-      prevPathRef.current = location.pathname;
-      
-      // Phase 1: Close curtains
-      setPhase("closing");
-      
+  useEffect(() => {
+    if (location.pathname === prevPathRef.current) return;
+    if (isAnimating.current) return;
+
+    prevPathRef.current = location.pathname;
+    isAnimating.current = true;
+
+    // Step 1: Close curtains (old page still visible)
+    setPhase("closing");
+
+    // Step 2: After curtains fully closed, swap content
+    setTimeout(() => {
+      setDisplayChildren(pendingChildrenRef.current);
+      setPhase("closed");
+
+      // Step 3: Brief pause with curtains closed, then open
       setTimeout(() => {
-        // Phase 2: Curtains closed, swap content
-        setPhase("closed");
-        setDisplayChildren(children);
-        
+        setPhase("opening");
+
+        // Step 4: After curtains fully open, cleanup
         setTimeout(() => {
-          // Phase 3: Open curtains
-          setPhase("opening");
-          
-          setTimeout(() => {
-            // Phase 4: Done
-            setPhase("idle");
-          }, 550);
-        }, 150);
-      }, 520);
-    } else {
-      setDisplayChildren(children);
-    }
-  }, [location.pathname, children]);
+          setPhase("idle");
+          isAnimating.current = false;
+        }, 500);
+      }, 200);
+    }, 480);
+  }, [location.pathname]);
 
   const curtainClass = phase === "closing" || phase === "closed"
     ? classes.curtainClosing
@@ -168,10 +168,10 @@ export default function PageTransition({ children }) {
 
   return (
     <div className={classes.wrapper}>
-      <div className={`${classes.content} ${phase === "closed" ? classes.contentHidden : ""}`}>
+      <div className={classes.content}>
         {displayChildren}
       </div>
-      
+
       {phase !== "idle" && (
         <div className={`${classes.curtainOverlay} ${curtainClass}`}>
           <div className={classes.curtainLeft}>
