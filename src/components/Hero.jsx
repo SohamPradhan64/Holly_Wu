@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { createUseStyles } from "react-jss";
+import { usePageTransition } from "./TransitionContext.jsx";
 
 const useStyles = createUseStyles({
   hero: ({ image }) => ({
@@ -54,9 +54,10 @@ const useStyles = createUseStyles({
     textTransform: "uppercase",
     letterSpacing: "0.18em",
     fontSize: "12px",
-    textDecoration: "none",
     color: "#f9ecd3",
     background: "rgba(15,10,7,0.65)",
+    cursor: "pointer",
+    fontFamily: "inherit",
     transition: "background 0.2s ease, transform 0.2s ease",
     "&:hover": {
       background: "rgba(15,10,7,0.85)",
@@ -79,6 +80,8 @@ const useStyles = createUseStyles({
 
 export default function Hero({ image }) {
   const classes = useStyles({ image });
+  const { navigateWithTransition } = usePageTransition();
+
   return (
     <header className={classes.hero}>
       <div className={classes.overlay} />
@@ -92,12 +95,18 @@ export default function Hero({ image }) {
           specialties, and the warm hush of an old-world dining house.
         </p>
         <div className={classes.actions}>
-          <Link className={`${classes.button} ${classes.buttonAlt}`} to="/reservations">
+          <button
+            className={`${classes.button} ${classes.buttonAlt}`}
+            onClick={() => navigateWithTransition("/reservations")}
+          >
             Reserve a Table
-          </Link>
-          <Link className={classes.button} to="/menu">
+          </button>
+          <button
+            className={classes.button}
+            onClick={() => navigateWithTransition("/menu")}
+          >
             View Menu
-          </Link>
+          </button>
         </div>
       </div>
     </header>
