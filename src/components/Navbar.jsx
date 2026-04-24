@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { createUseStyles } from "react-jss";
+import { usePageTransition } from "./TransitionContext.jsx";
 
 const useStyles = createUseStyles({
   nav: {
@@ -7,12 +8,11 @@ const useStyles = createUseStyles({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 100,
+    zIndex: 10000,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "18px 8vw",
-    transition: "background 0.3s ease, box-shadow 0.3s ease",
     background: "rgba(18,14,12,0.85)",
     backdropFilter: "blur(12px)",
     borderBottom: "1px solid rgba(216,180,127,0.15)",
@@ -23,6 +23,11 @@ const useStyles = createUseStyles({
     textTransform: "uppercase",
     color: "#f6ead0",
     textDecoration: "none",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    fontFamily: "inherit",
+    padding: 0,
   },
   links: {
     display: "flex",
@@ -37,14 +42,22 @@ const useStyles = createUseStyles({
     padding: "6px 0",
     borderBottom: "1px solid transparent",
     transition: "color 0.2s ease, border-color 0.2s ease",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    borderBottom: "1px solid transparent",
+    fontFamily: "inherit",
+    fontSize: "13px",
+    letterSpacing: "0.18em",
+    textTransform: "uppercase",
     "&:hover": {
       color: "#d8b47f",
       borderBottom: "1px solid #d8b47f",
     },
   },
   active: {
-    color: "#d8b47f",
-    borderBottom: "1px solid #d8b47f",
+    color: "#d8b47f !important",
+    borderBottom: "1px solid #d8b47f !important",
   },
   "@media (max-width: 768px)": {
     links: {
@@ -68,19 +81,31 @@ const navItems = [
 export default function Navbar() {
   const classes = useStyles();
   const location = useLocation();
+  const { navigateWithTransition } = usePageTransition();
+
+  const handleClick = (e, to) => {
+    e.preventDefault();
+    if (location.pathname === to) return;
+    navigateWithTransition(to);
+  };
 
   return (
     <nav className={classes.nav}>
-      <Link to="/" className={classes.brand}>Holly Wu</Link>
+      <button
+        className={classes.brand}
+        onClick={(e) => handleClick(e, "/")}
+      >
+        Holly Wu
+      </button>
       <div className={classes.links}>
         {navItems.map((item) => (
-          <Link
+          <button
             key={item.to}
-            to={item.to}
             className={`${classes.link} ${location.pathname === item.to ? classes.active : ""}`}
+            onClick={(e) => handleClick(e, item.to)}
           >
             {item.label}
-          </Link>
+          </button>
         ))}
       </div>
     </nav>
