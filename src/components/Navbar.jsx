@@ -29,43 +29,12 @@ const useStyles = createUseStyles({
     border: "none",
     fontFamily: "inherit",
     padding: 0,
-    flexShrink: 0,
-  },
-  links: {
-    display: "flex",
-    gap: "20px",
-    fontSize: "12px",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase",
-    "@media (max-width: 1100px)": {
-      display: "none",
+    "@media (max-width: 600px)": {
+      fontSize: "20px",
     },
-  },
-  link: {
-    color: "#f6ead0",
-    padding: "6px 0",
-    borderBottom: "1px solid transparent",
-    transition: "color 0.2s ease, border-color 0.2s ease",
-    cursor: "pointer",
-    background: "none",
-    border: "none",
-    borderBottom: "1px solid transparent",
-    fontFamily: "inherit",
-    fontSize: "12px",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase",
-    whiteSpace: "nowrap",
-    "&:hover": {
-      color: "#d8b47f",
-      borderBottom: "1px solid #d8b47f",
-    },
-  },
-  active: {
-    color: "#d8b47f !important",
-    borderBottom: "1px solid #d8b47f !important",
   },
   hamburger: {
-    display: "none",
+    display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     gap: "5px",
@@ -75,15 +44,13 @@ const useStyles = createUseStyles({
     border: "none",
     cursor: "pointer",
     padding: 0,
-    "@media (max-width: 1100px)": {
-      display: "flex",
-    },
   },
   hamburgerLine: {
     width: "100%",
     height: "1px",
     backgroundColor: "#f6ead0",
     transition: "all 0.3s ease",
+    transformOrigin: "center",
   },
   hamburgerLineOpen1: {
     transform: "translateY(6px) rotate(45deg)",
@@ -102,11 +69,12 @@ const useStyles = createUseStyles({
     left: 0,
     right: 0,
     bottom: 0,
-    background: "rgba(0,0,0,0.7)",
+    background: "rgba(0,0,0,0.6)",
+    backdropFilter: "blur(4px)",
     zIndex: 9998,
     opacity: 0,
     pointerEvents: "none",
-    transition: "opacity 0.3s ease",
+    transition: "opacity 0.35s ease",
   },
   drawerOverlayOpen: {
     opacity: 1,
@@ -117,55 +85,74 @@ const useStyles = createUseStyles({
     top: 0,
     right: 0,
     bottom: 0,
-    width: "min(85vw, 380px)",
-    background: "#120e0c",
-    borderLeft: "1px solid rgba(216,180,127,0.2)",
+    width: "min(90vw, 420px)",
+    background: "linear-gradient(180deg, #120e0c 0%, #1a1210 100%)",
+    borderLeft: "1px solid rgba(216,180,127,0.25)",
     zIndex: 9999,
     transform: "translateX(100%)",
-    transition: "transform 0.35s ease",
-    padding: "90px 2rem 2rem",
+    transition: "transform 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
+    padding: "100px 3rem 3rem",
     display: "flex",
     flexDirection: "column",
-    gap: "0.5rem",
+    gap: "0.25rem",
     overflowY: "auto",
+    boxShadow: "-20px 0 60px rgba(0,0,0,0.5)",
   },
   drawerOpen: {
     transform: "translateX(0)",
   },
+  drawerEyebrow: {
+    fontSize: "0.7rem",
+    letterSpacing: "0.4em",
+    color: "rgba(216,180,127,0.6)",
+    textTransform: "uppercase",
+    marginBottom: "1.5rem",
+    paddingBottom: "1.5rem",
+    borderBottom: "1px solid rgba(216,180,127,0.15)",
+  },
   drawerLink: {
     color: "#f6ead0",
-    padding: "1rem 0",
-    borderBottom: "1px solid rgba(216,180,127,0.1)",
+    padding: "1.1rem 0",
     background: "none",
     border: "none",
-    borderBottom: "1px solid rgba(216,180,127,0.1)",
+    borderBottom: "1px solid rgba(216,180,127,0.08)",
     fontFamily: "inherit",
-    fontSize: "14px",
-    letterSpacing: "0.2em",
+    fontSize: "15px",
+    letterSpacing: "0.22em",
     textTransform: "uppercase",
     textAlign: "left",
     cursor: "pointer",
-    transition: "color 0.2s ease",
+    transition: "color 0.25s ease, padding-left 0.25s ease",
     "&:hover": {
       color: "#d8b47f",
+      paddingLeft: "0.5rem",
     },
   },
   drawerLinkActive: {
     color: "#d8b47f !important",
   },
+  drawerFooter: {
+    marginTop: "auto",
+    paddingTop: "2rem",
+    fontSize: "0.75rem",
+    letterSpacing: "0.2em",
+    textTransform: "uppercase",
+    color: "rgba(216,180,127,0.5)",
+  },
 });
 
 const navItems = [
+  { to: "/", label: "Home" },
   { to: "/story", label: "Story" },
   { to: "/menu", label: "Menu" },
   { to: "/tea-bar", label: "Tea Bar" },
-  { to: "/order", label: "Order" },
+  { to: "/order", label: "Order Online" },
   { to: "/reservations", label: "Reservations" },
   { to: "/catering", label: "Catering" },
   { to: "/parking", label: "Parking" },
   { to: "/gift-card", label: "Gift Cards" },
-  { to: "/careers", label: "Careers" },
-  { to: "/about", label: "About" },
+  { to: "/careers", label: "Join the Team" },
+  { to: "/about", label: "About Us" },
   { to: "/store", label: "Store" },
 ];
 
@@ -188,6 +175,15 @@ export default function Navbar() {
     };
   }, [drawerOpen]);
 
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   const handleClick = (e, to) => {
     e.preventDefault();
     setDrawerOpen(false);
@@ -205,22 +201,11 @@ export default function Navbar() {
           Holly Wu
         </button>
 
-        <div className={classes.links}>
-          {navItems.map((item) => (
-            <button
-              key={item.to}
-              className={`${classes.link} ${location.pathname === item.to ? classes.active : ""}`}
-              onClick={(e) => handleClick(e, item.to)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
         <button
           className={classes.hamburger}
           onClick={() => setDrawerOpen(!drawerOpen)}
           aria-label="Toggle menu"
+          aria-expanded={drawerOpen}
         >
           <span className={`${classes.hamburgerLine} ${drawerOpen ? classes.hamburgerLineOpen1 : ""}`} />
           <span className={`${classes.hamburgerLine} ${drawerOpen ? classes.hamburgerLineOpen2 : ""}`} />
@@ -233,7 +218,8 @@ export default function Navbar() {
         onClick={() => setDrawerOpen(false)}
       />
 
-      <div className={`${classes.drawer} ${drawerOpen ? classes.drawerOpen : ""}`}>
+      <aside className={`${classes.drawer} ${drawerOpen ? classes.drawerOpen : ""}`}>
+        <div className={classes.drawerEyebrow}>Menu</div>
         {navItems.map((item) => (
           <button
             key={item.to}
@@ -243,7 +229,8 @@ export default function Navbar() {
             {item.label}
           </button>
         ))}
-      </div>
+        <div className={classes.drawerFooter}>Holly Wu · Austin</div>
+      </aside>
     </>
   );
 }
