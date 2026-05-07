@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { createUseStyles } from "react-jss";
-import { usePageTransition } from "./TransitionContext.jsx";
 
 const useStyles = createUseStyles({
   nav: {
@@ -159,15 +158,13 @@ const navItems = [
 export default function Navbar() {
   const classes = useStyles();
   const location = useLocation();
-  const { navigateWithTransition } = usePageTransition();
+  const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Close drawer on route change
   useEffect(() => {
     setDrawerOpen(false);
   }, [location.pathname]);
 
-  // Lock body scroll when drawer is open
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
     return () => {
@@ -175,7 +172,6 @@ export default function Navbar() {
     };
   }, [drawerOpen]);
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setDrawerOpen(false);
@@ -188,7 +184,7 @@ export default function Navbar() {
     e.preventDefault();
     setDrawerOpen(false);
     if (location.pathname === to) return;
-    navigateWithTransition(to);
+    navigate(to);
   };
 
   return (
