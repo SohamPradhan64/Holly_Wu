@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createUseStyles } from "react-jss";
+import mark from "../assets/holly_wu_mark.png";
 
 const useStyles = createUseStyles({
   nav: {
@@ -12,24 +13,37 @@ const useStyles = createUseStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "18px 6vw",
+    padding: "12px 6vw",
     background: "rgba(18,14,12,0.85)",
     backdropFilter: "blur(12px)",
     borderBottom: "1px solid rgba(216,180,127,0.15)",
+  },
+  brandWrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+    fontFamily: "inherit",
+  },
+  markImg: {
+    height: "44px",
+    width: "auto",
+    opacity: 0.95,
+    "@media (max-width: 600px)": {
+      height: "34px",
+    },
   },
   brand: {
     fontSize: "26px",
     letterSpacing: "0.18em",
     textTransform: "uppercase",
     color: "#f6ead0",
-    textDecoration: "none",
-    cursor: "pointer",
-    background: "none",
-    border: "none",
-    fontFamily: "inherit",
-    padding: 0,
     "@media (max-width: 600px)": {
-      fontSize: "20px",
+      fontSize: "18px",
+      letterSpacing: "0.14em",
     },
   },
   hamburger: {
@@ -191,10 +205,11 @@ export default function Navbar() {
     <>
       <nav className={classes.nav}>
         <button
-          className={classes.brand}
+          className={classes.brandWrap}
           onClick={(e) => handleClick(e, "/")}
         >
-          Holly Wu
+          <img src={mark} alt="" className={classes.markImg} />
+          <span className={classes.brand}>Holly Wu</span>
         </button>
 
         <button
