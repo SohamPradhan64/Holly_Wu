@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss";
-import { usePageTransition } from "./TransitionContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createUseStyles({
   hero: ({ image }) => ({
@@ -80,8 +80,7 @@ const useStyles = createUseStyles({
 
 export default function Hero({ image }) {
   const classes = useStyles({ image });
-  const { navigateWithTransition } = usePageTransition();
-
+  const navigate = useNavigate();
   return (
     <header className={classes.hero}>
       <div className={classes.overlay} />
@@ -97,13 +96,13 @@ export default function Hero({ image }) {
         <div className={classes.actions}>
           <button
             className={`${classes.button} ${classes.buttonAlt}`}
-            onClick={() => navigateWithTransition("/reservations")}
+            onClick={() => navigate("/reservations")}
           >
             Reserve a Table
           </button>
           <button
             className={classes.button}
-            onClick={() => navigateWithTransition("/menu")}
+            onClick={() => navigate("/menu")}
           >
             View Menu
           </button>
